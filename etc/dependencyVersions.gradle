@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Chris K Wensel <chris@wensel.net>. All Rights Reserved.
+ * Copyright (c) 2018 Chris K Wensel <chris@wensel.net>. All Rights Reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@ configurations.all {
   resolutionStrategy.cacheDynamicVersionsFor 5, 'minutes'
 }
 
+ext.cascading3Version = '3.2.1'
 ext.junitVersion = '4.12'
 ext.log4jVersion = '1.2.17'
 ext.slf4jVersion = '1.7.5'

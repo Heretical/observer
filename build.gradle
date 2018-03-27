@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Chris K Wensel <chris@wensel.net>. All Rights Reserved.
+ * Copyright (c) 2018 Chris K Wensel <chris@wensel.net>. All Rights Reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,7 +18,7 @@ allprojects {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven {url = 'http://conjars.org/repo/'}
+    maven {url = 'https://conjars.org/repo/'}
     maven {url = 'https://repository.apache.org'}
   }
 }
@@ -60,7 +60,7 @@ subprojects {
   javadoc.dependsOn << prepareDist
 
   javadoc {
-    def copyright = '<i>Copyright &#169; 21017 Chris K Wensel. All Rights Reserved.</i>'
+    def copyright = '<i>Copyright &#169; 2018 Chris K Wensel. All Rights Reserved.</i>'
 
     title = "Pointer Path ${releaseVersion}"
     destinationDir = file( "${distDir}/javadoc/${project.name}" )
@@ -145,9 +145,9 @@ subprojects {
       }
 
       pom.project {
-        description 'An API for data management, analytics, and machine learning on parallel computing clusters.'
-        inceptionYear '2017'
-        url 'http://cascading.org/'
+        description ''
+        inceptionYear '2018'
+        url 'http://heretical.io/'
         scm {
           url 'https://github.com/cwensel/cascading-local.git'
         }
@@ -171,7 +171,7 @@ subprojects {
 
 task allJavadoc( type: Javadoc, dependsOn: subprojects.javadoc ) {
 
-  def copyright = '<i>Copyright &#169; 2017 Chris K Wensel. All Rights Reserved.</i>'
+  def copyright = '<i>Copyright &#169; 2018 Chris K Wensel. All Rights Reserved.</i>'
 
   title = "Cascading ${releaseVersion}"
   destinationDir = file( "${distDir}/javadoc/all/" )

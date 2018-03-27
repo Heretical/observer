@@ -6,17 +6,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-rootProject.ext.testRoots = []
+package heretical.observer;
 
-project.ext.setTestingProperties = {
-
-  System.properties[ 'test.output.root' ] = new String( "${buildDir}/test/output" )
-
-  System.properties
-}
-
-test {
-  maxHeapSize '1000m'
-
-  systemProperties = setTestingProperties()
-}
+/**
+ *
+ */
+public enum Model
+  {
+    app,
+    flow,
+    step,
+    node,
+    slice
+  }

@@ -1,0 +1,36 @@
+ext.openCensusVersion = '0.12.2'
+/*
+ * Copyright (c) 2018 Chris K Wensel <chris@wensel.net>. All Rights Reserved.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
+//ext.openCensusVersion = '0.13.0-SNAPSHOT'
+
+dependencies {
+
+  compile project( ":observer-common" )
+
+  compileOnly group: 'cascading', name: 'cascading-core', version: cascading3Version
+
+  compile group: 'io.opencensus', name: 'opencensus-api', version: openCensusVersion
+  compile group: 'io.opencensus', name: 'opencensus-exporter-trace-logging', version: openCensusVersion
+  compile group: 'io.opencensus', name: 'opencensus-exporter-trace-zipkin', version: openCensusVersion
+
+
+  runtime group: 'io.opencensus', name: 'opencensus-impl', version: openCensusVersion
+
+  compileOnly group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+  compileOnly group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4jVersion
+  compileOnly group: 'log4j', name: 'log4j', version: log4jVersion
+
+  testCompile group: 'junit', name: 'junit', version: junitVersion
+
+  testCompile group: 'cascading', name: 'cascading-local', version: cascading3Version
+
+  testCompile group: 'cascading', name: 'cascading-core', classifier: "tests", version: cascading3Version
+  testCompile group: 'cascading', name: 'cascading-local', classifier: "tests", version: cascading3Version
+  testCompile group: 'cascading', name: 'cascading-platform', classifier: "tests", version: cascading3Version
+}

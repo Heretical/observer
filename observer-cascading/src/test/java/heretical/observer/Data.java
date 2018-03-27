@@ -6,17 +6,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-rootProject.ext.testRoots = []
+package heretical.observer;
 
-project.ext.setTestingProperties = {
+/**
+ *
+ */
+public interface Data
+  {
+  String TEST_DATA_PATH = "test.data.path";
 
-  System.properties[ 'test.output.root' ] = new String( "${buildDir}/test/output" )
+  String inputPath = System.getProperty( TEST_DATA_PATH, "../observer-cascading/src/test/resources/data/" );
 
-  System.properties
-}
-
-test {
-  maxHeapSize '1000m'
-
-  systemProperties = setTestingProperties()
-}
+  String inputFileApache = inputPath + "apache.10.txt";
+  }
