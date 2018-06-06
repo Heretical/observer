@@ -12,8 +12,10 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import cascading.management.DocumentService;
 import cascading.property.AppProps;
@@ -37,6 +39,8 @@ import io.opencensus.trace.Status;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
 import io.opencensus.trace.samplers.Samplers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static heretical.observer.cascading.instrument.Attributes.TIMES;
 import static heretical.observer.cascading.instrument.Attributes.durations;
@@ -46,6 +50,18 @@ import static heretical.observer.cascading.instrument.Attributes.durations;
  */
 public class ObserverSpanService implements DocumentService
   {
+  private static final Logger LOG = LoggerFactory.getLogger( ObserverSpanService.class );
+
+  private static final Set<ObserverSpanService> services = new LinkedHashSet<>();
+
+  /**
+   * For testing.
+   */
+  public static ObserverSpanService getService()
+    {
+    return services.iterator().next();
+    }
+
   private static final Sampler sampler = Samplers.alwaysSample();
   private static Tracer tracer;
   private static String appID;
@@ -59,6 +75,10 @@ public class ObserverSpanService implements DocumentService
 
   public ObserverSpanService()
     {
+    services.add( this );
+
+    if( services.size() > 1 )
+      LOG.warn( "duplicate services instantiated" );
     }
 
   @Override
@@ -98,10 +118,13 @@ public class ObserverSpanService implements DocumentService
       ZipkinTraceExporter.createAndRegister( zipkinURL, appName );
 
     tracer = Tracing.getTracer();
+
     appSpan = tracer.spanBuilderWithExplicitParent( Model.app + ":" + appID, null )
       .setSampler( sampler )
       .setRecordEvents( true )
       .startSpan();
+
+    LOG.info( "observer beginning app trace with id: {}", appSpan.getContext().getTraceId().toLowerBase16() );
     }
 
   @Override
@@ -111,9 +134,13 @@ public class ObserverSpanService implements DocumentService
 
     if( appSpan != null )
       {
+      LOG.info( "observer ending app trace with id: {}", appSpan.getContext().getTraceId().toLowerBase16() );
+
       appSpan.end();
       appSpan = null;
       }
+
+    Tracing.getExportComponent().shutdown();
     }
 
   @Override

@@ -8,9 +8,8 @@
 
 package heretical.observer.cascading;
 
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import cascading.PlatformTestCase;
 import cascading.flow.Flow;
@@ -26,23 +25,18 @@ import cascading.tuple.Fields;
 import heretical.observer.Tracings;
 import heretical.observer.cascading.instrument.ObserverClientState;
 import heretical.observer.cascading.instrument.ObserverSpanService;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import zipkin.Span;
+import zipkin.junit.ZipkinRule;
 
 import static heretical.observer.Data.inputFileApache;
 
-/**
- *
- */
+/** */
 public class BasicPlatformTest extends PlatformTestCase
   {
-  private static Logger logger;
-
-  @BeforeClass
-  public static void classSetUp() throws Exception
-    {
-    logger = Logger.getLogger( "io.opencensus.exporter.trace.logging.LoggingTraceExporter" );
-    }
+  @Rule
+  public ZipkinRule zipkin = new ZipkinRule();
 
   @Override
   public Map<Object, Object> getProperties()
@@ -53,6 +47,7 @@ public class BasicPlatformTest extends PlatformTestCase
     properties.put( "cascading3.management.document.service.classname", ObserverSpanService.class.getName() );
     properties.put( Tracings.LOGGER_ENABLED, "true" );
     properties.put( Tracings.ZIPKIN_ENABLED, "true" );
+    properties.put( Tracings.ZIPKIN_URL, zipkin.httpUrl() + "/api/v2/spans" );
 
     return properties;
     }
@@ -60,15 +55,18 @@ public class BasicPlatformTest extends PlatformTestCase
   @Test
   public void testSimpleGroup() throws Exception
     {
-    logger.log( Level.FINEST, "in test method" );
-
     getPlatform().copyFromLocal( inputFileApache );
 
     Tap source = getPlatform().getTextFile( new Fields( "offset", "line" ), inputFileApache );
 
     Pipe pipe = new Pipe( "test" );
 
-    pipe = new Each( pipe, new Fields( "line" ), new RegexParser( new Fields( "ip" ), "^[^ ]*" ), new Fields( "ip" ) );
+    pipe =
+      new Each(
+        pipe,
+        new Fields( "line" ),
+        new RegexParser( new Fields( "ip" ), "^[^ ]*" ),
+        new Fields( "ip" ) );
 
     pipe = new GroupBy( pipe, new Fields( "ip" ) );
 
@@ -80,10 +78,12 @@ public class BasicPlatformTest extends PlatformTestCase
 
     flow.complete();
 
-    validateLength( flow.openSource(), 10 ); // validate source, this once, as a sanity check
     validateLength( flow, 8, null );
 
-    Thread.sleep( 10 * 1000 );
-    logger.log( Level.FINEST, "out test method" );
+    ObserverSpanService.getService().stopService();
+
+    List<List<Span>> traces = zipkin.getTraces();
+
+    assertEquals( 3, traces.get( 0 ).size() );
     }
   }

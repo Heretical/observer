@@ -15,3 +15,4 @@ ext.junitVersion = '4.12'
 ext.log4jVersion = '1.2.17'
 ext.slf4jVersion = '1.7.5'
 
+ext.openCensusVersion = '0.14.0'
